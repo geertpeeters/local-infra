@@ -1,0 +1,25 @@
+services:
+  hermes-webui:
+    image: ghcr.io/nesquena/hermes-webui:latest
+    container_name: hermes-webui
+    ports:
+      # Bindt poort 8787 van de container aan localhost:8787 op de VPS [7], [8]
+      - "127.0.0.1:8787:8787"
+    volumes:
+      # Mounts gebaseerd op de templates [7], [1]
+      - "${HERMES_HOST_HOME}:/home/hermeswebui/.hermes"
+      - "${HERMES_WORKSPACE}:/workspace"
+      - "${HERMES_WIKI}:/wiki"
+    environment:
+      # Gebruikt de 'WANTED' variabelen uit de template voor permissies [9], [7]
+      - WANTED_UID=${UID}
+      - WANTED_GID=${GID}
+      - HERMES_WEBUI_PORT=8787
+      - HERMES_WEBUI_HOST=0.0.0.0
+      - HERMES_WEBUI_STATE_DIR=/home/hermeswebui/.hermes/webui
+      - HERMES_WEBUI_PASSWORD=${HERMES_WEBUI_PASSWORD}
+      # Voorkomt permissie-clashes op bestaande mappen [10], [11]
+      - HERMES_SKIP_CHMOD=1
+      - HERMES_WEBUI_AUTO_INSTALL=1
+      - WIKI_PATH=/wiki
+    restart: unless-stopped
