@@ -1,0 +1,37 @@
+services:
+  omniroute-redis:
+    image: docker.io/library/redis:7-alpine
+    container_name: omniroute-redis
+    restart: unless-stopped
+    volumes:
+      - ${OMNIROUTE_PERSIST_DIR}/redis:/data
+    command: redis-server --save 60 1 --loglevel warning
+    networks:
+      - infra-net
+
+  omniroute:
+    image: diegosouzapw/omniroute:latest
+    container_name: omniroute
+    restart: unless-stopped
+    stop_grace_period: 40s
+    env_file:
+      - .env
+    environment:
+      - DATA_DIR=/app/data
+      - PORT=${OMNIROUTE_DASHBOARD_PORT:-20128}
+      - DASHBOARD_PORT=${OMNIROUTE_DASHBOARD_PORT:-20128}
+      - API_PORT=${OMNIROUTE_API_PORT:-20129}
+      - API_HOST=0.0.0.0
+      - REDIS_URL=redis://omniroute-redis:6379
+    ports:
+      - "127.0.0.1:${OMNIROUTE_DASHBOARD_PORT:-20128}:${OMNIROUTE_DASHBOARD_PORT:-20128}"
+    volumes:
+      - ${OMNIROUTE_PERSIST_DIR}/data:/app/data
+    depends_on:
+      - omniroute-redis
+    networks:
+      - infra-net
+
+networks:
+  infra-net:
+    external: true

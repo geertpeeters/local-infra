@@ -1,0 +1,21 @@
+services:
+  trilium-mcp:
+    build:
+      context: https://github.com/perfectra1n/triliumnext-mcp.git
+    container_name: trilium-mcp
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      TRILIUM_URL: http://trilium:8080/etapi
+      TRILIUM_TOKEN: ${TRILIUM_API_TOKEN}
+      TRILIUM_TRANSPORT: http
+      TRILIUM_HTTP_PORT: ${TRILIUM_MCP_HTTP_PORT}
+    ports:
+      - "127.0.0.1:${TRILIUM_MCP_HTTP_PORT}:${TRILIUM_MCP_HTTP_PORT}"
+    networks:
+      - infra-net
+
+networks:
+  infra-net:
+    external: true
