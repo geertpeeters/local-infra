@@ -23,6 +23,29 @@ documented exceptions) and are reached by hostname, e.g. `http://trilium.test`.
 The `.hermes` container bind-mounts a host directory outside this repository that
 holds multiple profiles. That directory is not version-controlled.
 
+### Where configuration actually lives
+
+The compose files only describe the container. Files that an application reads
+at runtime are not in this repository unless noted:
+
+| What | Lives in | In git? |
+|------|----------|---------|
+| Homepage dashboard layout | `${HOMEPAGE_PERSIST_DIR}/config/services.yaml` | `homepage/services.yaml` is the source, see below |
+| Trilium notes | `${TRILIUM_DATA_DIR}` | no |
+| Opencode config | `${OPENCODE_PERSIST_DIR}/config` | no |
+
+> **Homepage reads `services.yaml`, not `services.yml`.** The extension is
+> hardcoded in the image, and if the file is missing Homepage silently copies its
+> own example config from `/app/src/skeleton` instead of failing, so a wrong
+> filename looks like "my changes are ignored". `homepage/services.yaml` in this
+> repo is the version-controlled source; symlink it into the mounted directory to
+> keep the dashboard in git:
+>
+> ```bash
+> mkdir -p "$HOMEPAGE_PERSIST_DIR/config"
+> ln -sfn "$PWD/homepage/services.yaml" "$HOMEPAGE_PERSIST_DIR/config/services.yaml"
+> ```
+
 ## Prerequisites
 
 - Docker Engine (>= 24.x) with the Compose v2 plugin (`docker compose`)
@@ -164,8 +187,10 @@ rather than safe:
   so everything is plain HTTP.
 - The Traefik dashboard runs with `api.insecure: true` and is therefore bound to
   `127.0.0.1:8083` only. Do not move that port to `0.0.0.0` without adding auth.
-- Trilium and the Homepage dashboard have no authentication of their own.
-  Anything that can reach the network can reach them.
+- Trilium has no authentication of its own. Anything that can reach the network
+  can reach it. (Homepage does have a built-in gate as of v2.0, but it is not
+  enabled here: set `HOMEPAGE_AUTH_ENABLED=true`, `HOMEPAGE_AUTH_SECRET`,
+  `HOMEPAGE_EXTERNAL_URL` and `HOMEPAGE_AUTH_PASSWORD` to turn it on.)
 
 ## Contributing
 
