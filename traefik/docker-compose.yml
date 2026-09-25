@@ -1,5 +1,6 @@
-# docker-compose.yml
-version: "3.9"
+# traefik/docker-compose.yml
+# Let op: geen 'version:' key meer, die is deprecated sinds Compose v2 en geeft
+# alleen een waarschuwing.
 
 services:
   traefik:
@@ -11,9 +12,9 @@ services:
     environment:
       - DOCKER_API_VERSION=1.40      # optional but harmless
     ports:
-      - "80:80"          # HTTP entrypoint
-      - "443:443"        # HTTPS entrypoint (keep for later TLS)
-      - "8083:8080"      # Dashboard moved to host port 8083
+      - "80:80"                      # HTTP entrypoint
+      - "443:443"                    # HTTPS entrypoint (keep for later TLS)
+      - "127.0.0.1:8083:8080"        # dashboard alleen op localhost, geen auth
     volumes:
       - ./traefik.yml:/traefik.yml:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro

@@ -19,7 +19,7 @@ services:
       - ${OPENCODE_PERSIST_DIR}/data:/home/opencode/.local
       - ${OPENCODE_PERSIST_DIR}/config:/home/opencode/.config/opencode
       - ${OPENCODE_PERSIST_DIR}/projects:/workspace
-      - /home/gp/data/infrastructure/repo:/workspace/repo
+      - ${OPENCODE_REPO_DIR}:/workspace/repo
 
     networks:
       - infra-net

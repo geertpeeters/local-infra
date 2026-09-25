@@ -10,7 +10,7 @@ services:
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
 
     env_file:
-      - ../../.env
+      - .env
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${PORTAINER_PERSIST_DIR}:/data
