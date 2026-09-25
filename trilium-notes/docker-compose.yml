@@ -7,14 +7,17 @@ services:
       - .env
     environment:
       - TRILIUM_DATA_DIR=/home/node/trilium-data
-    ports:
-      - '127.0.0.1:8080:8080'
     volumes:
       - ${TRILIUM_DATA_DIR}:/home/node/trilium-data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     networks:
       - infra-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.trilium.rule=Host(`trilium.test`)"
+      - "traefik.http.routers.trilium.entrypoints=web"
+      - "traefik.http.services.trilium.loadbalancer.server.port=8080"
 
 networks:
   infra-net:

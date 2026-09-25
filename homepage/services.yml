@@ -1,0 +1,9 @@
+- Infrastructure:
+    - OpenCode:
+        href: http://opencode.test
+        description: AI coding agent
+        icon: si-github
+    - Trilium:
+        href: http://trilium.test
+        description: Knowledge base SSOT
+        icon: si-trilium

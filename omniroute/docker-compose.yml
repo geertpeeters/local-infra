@@ -23,8 +23,14 @@ services:
       - API_PORT=${OMNIROUTE_API_PORT:-20129}
       - API_HOST=0.0.0.0
       - REDIS_URL=redis://omniroute-redis:6379
-    ports:
-      - "127.0.0.1:${OMNIROUTE_DASHBOARD_PORT:-20128}:${OMNIROUTE_DASHBOARD_PORT:-20128}"
+    #ports:
+    #  - "127.0.0.1:${OMNIROUTE_DASHBOARD_PORT:-20128}:${OMNIROUTE_DASHBOARD_PORT:-20128}"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.omniroute.rule=Host(`omniroute.test`)"
+      - "traefik.http.routers.omniroute.entrypoints=web"
+      - "traefik.http.services.omniroute.loadbalancer.server.port=20128"
+
     volumes:
       - ${OMNIROUTE_PERSIST_DIR}/data:/app/data
     depends_on:

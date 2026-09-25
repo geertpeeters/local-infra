@@ -1,0 +1,39 @@
+services:
+  opencode:
+    image: ghcr.io/anomalyco/opencode:latest
+    container_name: opencode
+    restart: unless-stopped
+    working_dir: /workspace
+
+    # Base image mist git; user is non-root 'opencode' met sudo-rechten.
+    entrypoint: []
+    command: >
+      sh -c "command -v git >/dev/null 2>&1 || apk add --no-cache git;
+      exec opencode serve --hostname 0.0.0.0 --port 4096"
+
+    environment:
+      - OPENCODE_SERVER_USERNAME=${OPENCODE_SERVER_USERNAME:-opencode}
+      - OPENCODE_SERVER_PASSWORD=${OPENCODE_SERVER_PASSWORD}
+
+    volumes:
+      - ${OPENCODE_PERSIST_DIR}/data:/home/opencode/.local
+      - ${OPENCODE_PERSIST_DIR}/config:/home/opencode/.config/opencode
+      - ${OPENCODE_PERSIST_DIR}/projects:/workspace
+      - /home/gp/data/infrastructure/repo:/workspace/repo
+
+    networks:
+      - infra-net
+
+    # Alleen nodig tijdens debuggen — weghalen zodra Traefik bevestigd werkt
+#    ports:
+#      - "127.0.0.1:4096:4096"
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.opencode.rule=Host(`opencode.test`)"
+      - "traefik.http.routers.opencode.entrypoints=web"
+      - "traefik.http.services.opencode.loadbalancer.server.port=4096"
+
+networks:
+  infra-net:
+    external: true

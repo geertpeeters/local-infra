@@ -25,8 +25,16 @@ services:
     container_name: hermes-webui
     depends_on:
       - hermes-agent
-    ports:
-      - "127.0.0.1:4545:8787"
+#    ports:
+#      - "127.0.0.1:4545:8787"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=infra-net"
+      - "traefik.http.routers.hermes-webui.rule=Host(`hermes-webui.test`)"
+      - "traefik.http.routers.hermes-webui.entrypoints=web"
+      - "traefik.http.routers.hermes-webui.service=hermes-webui"
+      - "traefik.http.services.hermes-webui.loadbalancer.server.port=8787"
+
     env_file:
       - .env
     volumes:
