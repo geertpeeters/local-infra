@@ -34,7 +34,7 @@ at runtime are not in this repository unless noted:
 | Trilium notes | `${TRILIUM_DATA_DIR}` | no |
 | Opencode config | `${OPENCODE_PERSIST_DIR}/config` | no |
 
-> **Homepage reads `services.yaml`, not `services.yml`.** The extension is
+> **Homepage reads `services.yaml`, not `services.yaml`.** The extension is
 > hardcoded in the image, and if the file is missing Homepage silently copies its
 > own example config from `/app/src/skeleton` instead of failing, so a wrong
 > filename looks like "my changes are ignored". `homepage/services.yaml` in this
