@@ -1,20 +1,23 @@
 services:
   trilium:
-    image: triliumnext/trilium:latest
+    image: triliumnext/trilium:v0.106.0@sha256:be93e82699b12950ac4e2e7b565ce092fe215b8dd6ddfc47921e37b49e6a0e8b
     container_name: trilium
     restart: unless-stopped
     env_file:
       - .env
     environment:
       - TRILIUM_DATA_DIR=/home/node/trilium-data
-    ports:
-      - '127.0.0.1:8080:8080'
     volumes:
       - ${TRILIUM_DATA_DIR}:/home/node/trilium-data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     networks:
       - infra-net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.trilium.rule=Host(`trilium.test`)"
+      - "traefik.http.routers.trilium.entrypoints=web"
+      - "traefik.http.services.trilium.loadbalancer.server.port=8080"
 
 networks:
   infra-net:

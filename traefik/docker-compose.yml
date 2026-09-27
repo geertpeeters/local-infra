@@ -1,0 +1,26 @@
+# traefik/docker-compose.yml
+# Let op: geen 'version:' key meer, die is deprecated sinds Compose v2 en geeft
+# alleen een waarschuwing.
+
+services:
+  traefik:
+    image: traefik:v3.7@sha256:24841fe2de7304c149343d877d2923b4c8800a38ba015dea9174c23b20e344a0
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      - "--configFile=/traefik.yml"
+      - "--docker.apiVersion=1.40"   # forces Traefik to use API 1.40
+    ports:
+      - "80:80"                      # HTTP entrypoint
+      - "443:443"                    # HTTPS entrypoint (keep for later TLS)
+      - "127.0.0.1:8083:8080"        # dashboard alleen op localhost, geen auth
+    volumes:
+      - ./traefik.yml:/traefik.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - infra-net
+
+
+networks:
+  infra-net:
+    external: true

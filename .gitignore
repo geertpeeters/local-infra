@@ -1,0 +1,15 @@
+# Let op: <service>/.env bestaat bewust als GETRACKE SYMLINK naar de centrale
+# secret-store één map boven de repo. Zet die daarom NIET in .gitignore; je zou
+# de 7 symlinks dan untracken en elke verse clone breken tot `make setup` draait.
+# `make check` controleert dat elke .env nog steeds een symlink is (geen echt
+# bestand met secrets).
+#
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Runtime- en backup-artifacts
+**/__pycache__/
+*.log
+.DS_Store

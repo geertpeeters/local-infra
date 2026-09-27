@@ -1,6 +1,18 @@
+# OBSOLETE / NIET GEBRUIKEN
+#
+# Dit is een oude single-service-variant uit een sjabloon. `scripts/validate.sh`
+# slaat hem over (de bestandsnaam wijkt af van docker-compose.yml) en `up` werkt
+# niet: HERMES_HOST_HOME, HERMES_WORKSPACE en HERMES_WIKI bestaan in geen enkele
+# .env en nergens anders in deze repo, dus Compose stopt met "variable is not set".
+# Bovendien claimt dit bestand container_name: hermes-webui, hetzelfde als de
+# echte stack in docker-compose.yml, dus de twee kunnen nooit tegelijk draaien.
+#
+# De image-pin hieronder is bewust meegepind zodat dit bestand niet verouderd
+# blijft opgehangen, maar hij maakt het bestand NIET werkend. Zie
+# hermes/README.md > Gotchas. Aanbevolen: verwijderen.
 services:
   hermes-webui:
-    image: ghcr.io/nesquena/hermes-webui:latest
+    image: ghcr.io/nesquena/hermes-webui:0.52.113@sha256:48ba6ee4a837079955c00e997b751065cc0324ae6eaa0f2fec592c8f4b2a746e
     container_name: hermes-webui
     ports:
       # Bindt poort 8787 van de container aan localhost:8787 op de VPS [7], [8]
