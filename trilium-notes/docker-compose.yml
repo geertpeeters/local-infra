@@ -1,6 +1,6 @@
 services:
   trilium:
-    image: triliumnext/trilium:latest
+    image: triliumnext/trilium:v0.106.0@sha256:be93e82699b12950ac4e2e7b565ce092fe215b8dd6ddfc47921e37b49e6a0e8b
     container_name: trilium
     restart: unless-stopped
     env_file:

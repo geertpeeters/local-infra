@@ -69,13 +69,27 @@ while IFS= read -r compose_file; do
 	out="$(resolve "$compose_file")"
 	resolved=$?
 	if [ "$resolved" -ne 0 ]; then
-		problems="${problems}     docker compose config faalde: $(head -1 "$ERR")
+		# Compose zet waarschuwingen bovenaan op stderr. `head -1` zou dan de
+		# oorzaak verhullen en een waarschuwing als foutmelding tonen, dus eerst
+		# de eerste regel zoeken die géén warning is.
+		reason="$(grep -v -e 'level=warning' -e '^WARN\[' -e 'is not set\. Defaulting' "$ERR" | head -1)"
+		[ -n "$reason" ] || reason="$(head -1 "$ERR")"
+		problems="${problems}     docker compose config faalde: ${reason}
 "
 	fi
 
-	# 3. niet-gezette variabelen zijn de stilste breuk in deze repo
+	# 3. niet-gezette variabelen zijn de stilste breuk in deze repo. Compose
+	#    waarschuwt hiervoor in twee formaten: kaal ("The "X" variable is not
+	#    set") en verpakt in een logregel, waar de aanhalingstekens escaped zijn
+	#    (msg="The \"X\" variable is not set"). De backslashes eerst weghalen,
+	#    anders blijft de naam leeg en weet de leek niet wat hij moet invullen.
 	if grep -q 'variable is not set' "$ERR" 2>/dev/null; then
-		missing="$(grep -o 'The "[^"]*" variable is not set' "$ERR" | sort -u | sed 's/The "//; s/" variable is not set//' | tr '\n' ' ')"
+		missing="$(sed 's/\\//g' "$ERR" |
+			grep -o 'The "[^"]*" variable is not set' |
+			sort -u |
+			sed 's/The "//; s/" variable is not set//' |
+			tr '\n' ' ')"
+		[ -n "$missing" ] || missing="(naam niet te achterhalen, zie de melding hierboven)"
 		problems="${problems}     niet-gezette variabele(n): ${missing}
 "
 	fi
@@ -84,6 +98,28 @@ while IFS= read -r compose_file; do
 	#    anders is dit al in de foutmelding van de resolutie verwerkt)
 	if [ "$resolved" -eq 0 ] && ! printf '%s\n' "$out" | grep -q 'name: infra-net'; then
 		problems="${problems}     verwijst niet naar het externe netwerk 'infra-net'
+"
+	fi
+
+	# 5. elke image op tag + digest. Gecontroleerd op het bronbestand en niet op
+	#    de resolutie, want Compose zet bij een build-only service zelf een
+	#    image: met de servicenaam erin - die mag je niet pinnen.
+	unpinned="$(sed -n 's/^[[:space:]]*image:[[:space:]]*//p' "$compose_file" |
+		grep -v '@sha256:' || true)"
+	if [ -n "$unpinned" ]; then
+		while IFS= read -r image; do
+			problems="${problems}     image zonder digest (moet image:tag@sha256:... zijn): ${image}
+"
+		done <<EOF
+$unpinned
+EOF
+	fi
+
+	# 6. een container_name maakt 'docker logs <naam>' mogelijk en voorkomt
+	#    project-afhankelijke containerdieren. Alle stacks hebben er nu een
+	#    (traefik incl.); een nieuwe stack die hem vergeet moet hier op vallen.
+	if ! grep -q 'container_name:' "$compose_file"; then
+		problems="${problems}     geen container_name op deze stack
 "
 	fi
 

@@ -1,6 +1,6 @@
 services:
   omniroute-redis:
-    image: docker.io/library/redis:7-alpine
+    image: docker.io/library/redis:7-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499
     container_name: omniroute-redis
     restart: unless-stopped
     volumes:
@@ -10,7 +10,7 @@ services:
       - infra-net
 
   omniroute:
-    image: diegosouzapw/omniroute:latest
+    image: diegosouzapw/omniroute:latest@sha256:085c57adf499a8aaa9f35ccde95c0df9c11bd9ecd18d6c9edbf3b68b8079ba9d
     container_name: omniroute
     restart: unless-stopped
     stop_grace_period: 40s

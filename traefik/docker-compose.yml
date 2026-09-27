@@ -4,13 +4,12 @@
 
 services:
   traefik:
-    image: traefik:v3.6
+    image: traefik:v3.7@sha256:24841fe2de7304c149343d877d2923b4c8800a38ba015dea9174c23b20e344a0
+    container_name: traefik
     restart: unless-stopped
     command:
       - "--configFile=/traefik.yml"
       - "--docker.apiVersion=1.40"   # forces Traefik to use API 1.40
-    environment:
-      - DOCKER_API_VERSION=1.40      # optional but harmless
     ports:
       - "80:80"                      # HTTP entrypoint
       - "443:443"                    # HTTPS entrypoint (keep for later TLS)

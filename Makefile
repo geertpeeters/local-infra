@@ -20,7 +20,7 @@ COMPOSE_DIR := $(CURDIR)/$(SVC)
 COMPOSE := docker compose --project-directory $(COMPOSE_DIR) -f $(COMPOSE_DIR)/docker-compose.yml
 
 .PHONY: help setup check stacks up down restart pull logs ps shell clean \
-        require-svc require-service \
+        require-svc require-service backup \
         trilium-up trilium-down trilium-logs trilium-ps
 
 help:
@@ -36,6 +36,8 @@ help:
 	@echo "  make ps     SVC=<stack> status"
 	@echo "  make shell  SVC=<stack> SERVICE=<svc>  shell in de container"
 	@echo "  make clean  SVC=<stack> stack stoppen en volumes weggooien"
+	@echo "  make backup                            back-up van alle persist-directories"
+	@echo "  make backup BACKUP_ARGS=--stop         idem, maar stacks even stil voor een consistente kopie"
 
 stacks:
 	@printf '%s\n' $(STACKS)
@@ -46,10 +48,17 @@ setup:
 check:
 	@./scripts/validate.sh
 
+# Alle stateful data van de repo in één archiefmap. Geen SVC nodig: een backup
+# is per definitie over alle stacks heen. Zie scripts/backup.sh --help.
+BACKUP_ARGS ?=
+
+backup:
+	@./scripts/backup.sh $(BACKUP_ARGS)
+
 # --- stackbeheer --------------------------------------------------------------
 
 up: require-svc
-	$(COMPOSE) up -d --pull always
+	$(COMPOSE) up -d
 
 down: require-svc
 	$(COMPOSE) down
