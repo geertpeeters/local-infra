@@ -7,6 +7,8 @@ services:
       - .env
     environment:
       - TRILIUM_DATA_DIR=/home/node/trilium-data
+      - TRILIUM_SECURITY_BACKEND_SCRIPTING_ENABLED=true
+      - TRILIUM_SECURITY_SQL_CONSOLE_ENABLED=true
     volumes:
       - ${TRILIUM_DATA_DIR}:/home/node/trilium-data
       - /etc/timezone:/etc/timezone:ro

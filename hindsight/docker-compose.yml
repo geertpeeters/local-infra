@@ -1,0 +1,25 @@
+services:
+  hindsight:
+    image: ghcr.io/vectorize-io/hindsight:latest
+    container_name: hindsight
+    restart: unless-stopped
+    networks:
+      - infra-net
+    environment:
+      - HINDSIGHT_API_LLM_PROVIDER=openai
+      - HINDSIGHT_API_LLM_BASE_URL=http://omniroute.test/v1
+      - HINDSIGHT_API_LLM_API_KEY=${OMNIROUTE_API_KEY}
+      - HINDSIGHT_API_LLM_MODEL=default
+    volumes:
+      - /home/gp/data/infrastructure/data/hindsight:/home/hindsight/.pg0
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hindsight.rule=Host(`hindsight.test`)"
+      - "traefik.http.services.hindsight.loadbalancer.server.port=8888"
+
+networks:
+  infra-net:
+    external: true
+    name: infra-net
