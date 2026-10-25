@@ -1,6 +1,5 @@
-FROM ghcr.io/nesquena/hermes-webui:latest
+FROM ghcr.io/nesquena/hermes-webui:0.52.113@sha256:48ba6ee4a837079955c00e997b751065cc0324ae6eaa0f2fec592c8f4b2a746e
 USER root
-# pinned op de commit die de editable-fix + de env-`=`-fix bevat,
-# zodat een rebuild later niet ineens van master-input verandert
+# pinned op de commit die de editable-fix + de env-`=`-fix bevat
 ADD https://raw.githubusercontent.com/nesquena/hermes-webui/95107ceb94d7db6b35542427f2d1f35c59124ab2/docker_init.bash /hermeswebui_init.bash
 RUN chmod 555 /hermeswebui_init.bash

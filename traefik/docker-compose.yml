@@ -4,12 +4,13 @@
 
 services:
   traefik:
-    image: traefik:v3.7@sha256:24841fe2de7304c149343d877d2923b4c8800a38ba015dea9174c23b20e344a0
+    image: traefik:latest
     container_name: traefik
     restart: unless-stopped
     command:
       - "--configFile=/traefik.yml"
       - "--docker.apiVersion=1.40"   # forces Traefik to use API 1.40
+      - "--ping"
     ports:
       - "80:80"                      # HTTP entrypoint
       - "443:443"                    # HTTPS entrypoint (keep for later TLS)
@@ -19,6 +20,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - infra-net
+#    healthcheck:
+#        test: ["CMD", "traefik", "healthcheck", "--ping"]
+#        interval: 30s
+#        timeout: 5s
+#        retries: 3
+#        start_period: 10s
 
 
 networks:
