@@ -1,15 +1,17 @@
 services:
   opencode:
-    image: ghcr.io/anomalyco/opencode:1.18.32@sha256:b3ce2a73474c57d19abb8c1e9d955c66066b4263e8f15167ba6e6c5ddf9a7ee0
+    build:
+      context: .
+      dockerfile: Dockerfile
+      pull: true
+    image: opencode-local
     container_name: opencode
     restart: unless-stopped
     working_dir: /workspace
 
-    # Base image mist git; user is non-root 'opencode' met sudo-rechten.
+    # Base image heeft een eigen entrypoint; leegmaken zodat command direct draait.
     entrypoint: []
-    command: >
-      sh -c "command -v git >/dev/null 2>&1 || apk add --no-cache git;
-      exec opencode serve --hostname 0.0.0.0 --port 4096"
+    command: ["opencode", "serve", "--hostname", "0.0.0.0", "--port", "4096"]
 
     environment:
       - OPENCODE_SERVER_USERNAME=${OPENCODE_SERVER_USERNAME:-opencode}
@@ -19,14 +21,18 @@ services:
       - ${OPENCODE_PERSIST_DIR}/data:/home/opencode/.local
       - ${OPENCODE_PERSIST_DIR}/config:/home/opencode/.config/opencode
       - ${OPENCODE_PERSIST_DIR}/projects:/workspace
-      - ${OPENCODE_PERSIST_DIR}:/workspace/repo
-
+#    healthcheck:
+#           test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:4096/ || wget -qO- http://127.0.0.1:4096/ || exit 1"]
+#           interval: 30s
+#           timeout: 5s
+#           retries: 3
+#           start_period: 20s
     networks:
       - infra-net
 
     # Alleen nodig tijdens debuggen — weghalen zodra Traefik bevestigd werkt
-#    ports:
-#      - "127.0.0.1:4096:4096"
+    # ports:
+    #   - "127.0.0.1:4096:4096"
 
     labels:
       - "traefik.enable=true"

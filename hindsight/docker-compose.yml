@@ -12,13 +12,16 @@ services:
       - HINDSIGHT_API_LLM_MODEL=default
     volumes:
       - /home/gp/data/infrastructure/data/hindsight:/home/hindsight/.pg0
-    env_file:
-      - .env
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.hindsight.rule=Host(`hindsight.test`)"
       - "traefik.http.services.hindsight.loadbalancer.server.port=8888"
-
+#    healthcheck:
+#        test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8888/ || wget -qO- http://127.0.0.1:8888/ || exit 1"]
+#        interval: 30s
+#        timeout: 5s
+#        retries: 3
+#        start_period: 15s
 networks:
   infra-net:
     external: true
