@@ -545,6 +545,9 @@ Traefik labels rather than published ports. Pin new images by tag *and* digest
 (see [Image versions](#image-versions)), and run `./scripts/validate.sh` before
 opening a pull request.
 
+## TODO
+https://hermes-agent.nousresearch.com/docs/user-guide/skills/optional/research/research-searxng-search
+
 ## License
 
 MIT License.
