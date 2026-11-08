@@ -1,6 +1,7 @@
 services:
   hermes-agent:
     image: nousresearch/hermes-agent:latest
+    pull_policy: always
     container_name: hermes-agent
     command: gateway run
     ports:
@@ -27,10 +28,8 @@ services:
       - infra-net
 
   hermes-webui:
-    #image: ghcr.io/nesquena/hermes-webui:latest
-    build:
-      context: .
-      dockerfile: Dockerfile.webui
+    image: ghcr.io/nesquena/hermes-webui:latest
+    pull_policy: always
     container_name: hermes-webui
     depends_on:
       - hermes-agent

@@ -20,7 +20,7 @@ services:
     volumes:
       - ${OPENCODE_PERSIST_DIR}/data:/home/opencode/.local
       - ${OPENCODE_PERSIST_DIR}/config:/home/opencode/.config/opencode
-      - ${OPENCODE_PERSIST_DIR}/projects:/workspace
+      - /home/gp/data/infrastructure:/workspace:rw
 #    healthcheck:
 #           test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:4096/ || wget -qO- http://127.0.0.1:4096/ || exit 1"]
 #           interval: 30s

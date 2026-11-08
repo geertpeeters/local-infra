@@ -1,0 +1,17 @@
+name: ai-engineer
+version: 1.0.0
+description: "AI and agentic framework assistent"
+hermes_requires: ">=0.22.5"
+author: "Geert Peeters"
+license: "MIT"
+
+# Tell installers which env vars the agent needs. These are checked against
+# the installer's shell and existing .env file so they don't get nagged
+# about keys they already have configured.
+env_requires:
+  - name: OMNIROUTE_API_KEY
+    description: "API key voor OmniRoute (model routing)"
+    required: true
+  - name: HINDSIGHT_TIMEOUT
+    description: "Timeout voor Hindsight-aanroepen"
+    required: false
